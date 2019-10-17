@@ -1,3 +1,7 @@
+# Other files
+.DS_Store
+.cxx
+
 # Built application files
 *.apk
 *.ap_
@@ -66,7 +70,3 @@
 /fastlane/screenshots/
 /fastlane/test_output/
 /fastlane/readme.md
-
-# Other files
-.DS_Store
-.cxx
