@@ -15,19 +15,21 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add);
 
         Button addButton = (Button)findViewById(R.id.addButton);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText firstNumberEditText  = (EditText)findViewById(R.id.firstNumberEditText);
-                EditText secondNumberEditText = (EditText)findViewById(R.id.secondNumberEditText);
-                TextView resultTextView       = (TextView)findViewById(R.id.resultTextView);
-
-                int firstNumber  = Integer.parseInt(firstNumberEditText.getText().toString());
-                int secondNumber = Integer.parseInt(secondNumberEditText.getText().toString());
-                int result = firstNumber + secondNumber;
-
-                resultTextView.setText(String.valueOf(result));
-            }
-        });
+        addButton.setOnClickListener(onAddButtonClick);
     }
+
+    private View.OnClickListener onAddButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EditText firstNumberEditText  = (EditText)findViewById(R.id.firstNumberEditText);
+            EditText secondNumberEditText = (EditText)findViewById(R.id.secondNumberEditText);
+            TextView resultTextView       = (TextView)findViewById(R.id.resultTextView);
+
+            int firstNumber  = Integer.parseInt(firstNumberEditText.getText().toString());
+            int secondNumber = Integer.parseInt(secondNumberEditText.getText().toString());
+            int result = firstNumber + secondNumber;
+
+            resultTextView.setText(String.valueOf(result));
+        }
+    };
 }
