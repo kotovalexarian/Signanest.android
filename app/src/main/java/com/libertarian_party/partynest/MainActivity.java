@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -50,17 +51,14 @@ public class MainActivity extends AppCompatActivity {
             // Do nothing.
         }
 
-        String[] itemsArray = new String[aliasesArrayList.size()];
-        itemsArray = aliasesArrayList.toArray(itemsArray);
-
-        recyclerViewAdapter = new RecyclerViewAdapter(itemsArray);
+        recyclerViewAdapter = new RecyclerViewAdapter(aliasesArrayList);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
-        private String[] items;
+        private List<String> items;
 
-        public RecyclerViewAdapter(String[] items) {
+        public RecyclerViewAdapter(List<String> items) {
             this.items = items;
         }
 
@@ -75,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(RecyclerViewHolder recyclerViewHolder, int position) {
-            recyclerViewHolder.textView.setText(items[position]);
+            recyclerViewHolder.textView.setText(items.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return items.length;
+            return items.size();
         }
     }
 
