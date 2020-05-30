@@ -17,16 +17,19 @@ import java.util.Enumeration;
 public class MainActivity extends AppCompatActivity {
     private ListView keyAliasesListView;
 
-    private void setWidgetInstanceVariables() {
-        keyAliasesListView = (ListView)findViewById(R.id.keyAliasesListView);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setWidgetInstanceVariables();
+        updateAliasesList();
+    }
 
+    private void setWidgetInstanceVariables() {
+        keyAliasesListView = (ListView)findViewById(R.id.keyAliasesListView);
+    }
+
+    private void updateAliasesList() {
         ArrayList<String> aliasesArrayList = new ArrayList<>();
 
         try {
