@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
+    private ArrayList<String> arrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        ArrayList<String> aliasesArrayList = new ArrayList<>();
+        arrayList = new ArrayList<>();
 
-        aliasesArrayList.add("Hello, World!");
-        aliasesArrayList.add("Foo Bar");
+        arrayList.add("Hello, World!");
+        arrayList.add("Foo Bar");
 
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -45,13 +46,13 @@ public class MainActivity extends AppCompatActivity {
 
             Enumeration<String> aliasesEnumeration = keyStore.aliases();
             while (aliasesEnumeration.hasMoreElements())
-                aliasesArrayList.add(aliasesEnumeration.nextElement());
+                arrayList.add(aliasesEnumeration.nextElement());
 
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
             // Do nothing.
         }
 
-        recyclerViewAdapter = new RecyclerViewAdapter(aliasesArrayList);
+        recyclerViewAdapter = new RecyclerViewAdapter(arrayList);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
