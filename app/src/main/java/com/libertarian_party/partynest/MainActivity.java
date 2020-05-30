@@ -66,11 +66,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = (View)LayoutInflater
+            return new RecyclerViewHolder(
+                    LayoutInflater
                     .from(parent.getContext())
-                    .inflate(R.layout.simple_text_view, parent, false);
-
-            return new RecyclerViewHolder(view);
+                    .inflate(R.layout.simple_text_view, parent, false)
+            );
         }
 
         @Override
