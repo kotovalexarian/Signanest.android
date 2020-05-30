@@ -23,19 +23,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
-    private ArrayList<String> arrayList;
+    private ArrayList<String> arrayList = new ArrayList<>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerViewLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
-        arrayList = new ArrayList<>();
+    private void refreshKeys() {
+        arrayList.clear();
 
         arrayList.add("Hello, World!");
         arrayList.add("Foo Bar");
@@ -52,8 +43,22 @@ public class MainActivity extends AppCompatActivity {
             // Do nothing.
         }
 
+        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
         recyclerViewAdapter = new RecyclerViewAdapter(arrayList);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        refreshKeys();
     }
 
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
