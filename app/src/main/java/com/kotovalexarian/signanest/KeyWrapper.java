@@ -26,14 +26,27 @@ public class KeyWrapper {
     {
         this.keyStore = keyStore;
         this.alias    = alias;
+    }
 
-        ensureExists();
+    public void ensureExists() throws KeyStoreWrapper.OwnException {
+        if (deleted) {
+            throw new KeyStoreWrapper.OwnException("Alias was deleted");
+        }
+
+        try {
+            if (!keyStore.containsAlias(alias)) {
+                throw new KeyStoreWrapper.OwnException("Alias doesn't exist");
+            }
+        } catch (KeyStoreException e) {
+            throw new KeyStoreWrapper.OwnException("Key store doesn't work", e);
+        }
     }
 
     public void delete() throws KeyStoreWrapper.OwnException {
         ensureExists();
 
         try {
+            deleted = true;
             keyStore.deleteEntry(alias);
         } catch (KeyStoreException e) {
             throw new KeyStoreWrapper.OwnException("Can not delete alias", e);
@@ -110,20 +123,6 @@ public class KeyWrapper {
             return signature.verify(Base64.getDecoder().decode(signatureString));
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
             throw new KeyStoreWrapper.OwnException("Can not verify", e);
-        }
-    }
-
-    private void ensureExists() throws KeyStoreWrapper.OwnException {
-        if (deleted) {
-            throw new KeyStoreWrapper.OwnException("Alias was deleted");
-        }
-
-        try {
-            if (!keyStore.containsAlias(alias)) {
-                throw new KeyStoreWrapper.OwnException("Alias doesn't exist");
-            }
-        } catch (KeyStoreException e) {
-            throw new KeyStoreWrapper.OwnException("Key store doesn't work", e);
         }
     }
 
