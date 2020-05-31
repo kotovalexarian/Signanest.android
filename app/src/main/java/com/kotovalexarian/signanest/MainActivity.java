@@ -1,4 +1,4 @@
-package com.kotovalexarian.cryptonest;
+package com.kotovalexarian.signanest;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

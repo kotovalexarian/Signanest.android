@@ -1,4 +1,4 @@
-package com.kotovalexarian.cryptonest;
+package com.kotovalexarian.signanest;
 
 import android.content.Context;
 
