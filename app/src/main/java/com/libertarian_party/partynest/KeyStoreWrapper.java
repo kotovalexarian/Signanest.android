@@ -22,6 +22,10 @@ import javax.security.auth.x500.X500Principal;
 
 public final class KeyStoreWrapper {
     public static final class OwnException extends GeneralSecurityException {
+        public OwnException(String errorMessage) {
+            super(errorMessage);
+        }
+
         public OwnException(String errorMessage, Throwable err) {
             super(errorMessage, err);
         }
@@ -71,30 +75,32 @@ public final class KeyStoreWrapper {
         }
     }
 
-    public void create(String alias) throws OwnException
+    public void create(String alias) throws OwnException, IllegalArgumentException
     {
         try {
-            if (!keyStore.containsAlias(alias)) {
-                Calendar start = Calendar.getInstance();
-                Calendar end = Calendar.getInstance();
-
-                end.add(Calendar.YEAR, 1);
-
-                KeyPairGeneratorSpec keyPairGeneratorSpec =
-                        new KeyPairGeneratorSpec.Builder(context)
-                                .setAlias(alias)
-                                .setSubject(new X500Principal("CN=Sample Name, O=Android Authority"))
-                                .setSerialNumber(BigInteger.ONE)
-                                .setStartDate(start.getTime())
-                                .setEndDate(end.getTime())
-                                .build();
-
-                KeyPairGenerator keyPairGenerator =
-                        KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
-                keyPairGenerator.initialize(keyPairGeneratorSpec);
-
-                KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            if (keyStore.containsAlias(alias)) {
+                throw new OwnException("Alias already exists");
             }
+
+            Calendar start = Calendar.getInstance();
+            Calendar end = Calendar.getInstance();
+
+            end.add(Calendar.YEAR, 1);
+
+            KeyPairGeneratorSpec keyPairGeneratorSpec =
+                    new KeyPairGeneratorSpec.Builder(context)
+                            .setAlias(alias)
+                            .setSubject(new X500Principal("CN=Sample Name, O=Android Authority"))
+                            .setSerialNumber(BigInteger.ONE)
+                            .setStartDate(start.getTime())
+                            .setEndDate(end.getTime())
+                            .build();
+
+            KeyPairGenerator keyPairGenerator =
+                    KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
+            keyPairGenerator.initialize(keyPairGeneratorSpec);
+
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
         } catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
             throw new OwnException("Can not generate key", e);
         }

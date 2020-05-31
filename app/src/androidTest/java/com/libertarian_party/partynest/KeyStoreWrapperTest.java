@@ -72,4 +72,21 @@ public class KeyStoreWrapperTest {
 
         keyStoreWrapper.getAlias(2);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void invalidName() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.create("");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void aliasAlreadyExists() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.create("foo");
+        keyStoreWrapper.create("foo");
+    }
 }
