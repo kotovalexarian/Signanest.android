@@ -34,8 +34,6 @@ public final class KeyStoreWrapper {
     }
 
     private final String keyStoreProvider = "AndroidKeyStore";
-    private final X500Principal x500Principal =
-            new X500Principal("CN=libertarian-party.com");
 
     private final Context context;
     private final KeyStore keyStore;
@@ -95,8 +93,6 @@ public final class KeyStoreWrapper {
                                     KeyProperties.PURPOSE_VERIFY |
                                     KeyProperties.PURPOSE_WRAP_KEY)
                             .setAttestationChallenge(null)
-                            .setCertificateSerialNumber(BigInteger.ONE)
-                            .setCertificateSubject(x500Principal)
                             .setDigests(
                                     KeyProperties.DIGEST_SHA224,
                                     KeyProperties.DIGEST_SHA256,
