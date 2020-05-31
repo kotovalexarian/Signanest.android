@@ -59,22 +59,6 @@ public final class KeyStoreWrapper {
         return aliases.get(position);
     }
 
-    private void refresh() throws OwnException {
-        aliases.clear();
-
-        try {
-            Enumeration<String> enumeration = keyStore.aliases();
-            while (enumeration.hasMoreElements())
-                aliases.add(enumeration.nextElement());
-        } catch (KeyStoreException e) {
-            throw new OwnException("Can not fetch aliases", e);
-        }
-
-        if (onRefresh != null) {
-            onRefresh.run();
-        }
-    }
-
     public void create(String alias) throws OwnException, IllegalArgumentException
     {
         try {
@@ -131,6 +115,22 @@ public final class KeyStoreWrapper {
             return cypherText;
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
             throw new OwnException("Can not decrypt", e);
+        }
+    }
+
+    private void refresh() throws OwnException {
+        aliases.clear();
+
+        try {
+            Enumeration<String> enumeration = keyStore.aliases();
+            while (enumeration.hasMoreElements())
+                aliases.add(enumeration.nextElement());
+        } catch (KeyStoreException e) {
+            throw new OwnException("Can not fetch aliases", e);
+        }
+
+        if (onRefresh != null) {
+            onRefresh.run();
         }
     }
 
