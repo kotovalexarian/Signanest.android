@@ -1,5 +1,6 @@
 package com.kotovalexarian.signanest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
     private KeyStoreWrapper keyStoreWrapper;
+    private FloatingActionButton newKeyFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (KeyStoreWrapper.OwnException e) {
             throw new RuntimeException("Key store wrapper failure", e);
         }
+
+        newKeyFab = findViewById(R.id.newKeyFab);
+
+        newKeyFab.setOnClickListener(onNewKeyFabClick);
     }
 
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
@@ -81,4 +89,12 @@ public class MainActivity extends AppCompatActivity {
             textView = view.findViewById(R.id.textView);
         }
     }
+
+    private final View.OnClickListener onNewKeyFabClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(), KeyActivity.class);
+            startActivity(intent);
+        }
+    };
 }
