@@ -107,41 +107,19 @@ public final class KeyStoreWrapper {
     }
 
     public String encrypt(final String alias, final String plainText) throws OwnException {
-        try {
-            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
-            if (plainText.isEmpty()) throw new OwnException("Empty plain text");
+        if (plainText.isEmpty()) throw new OwnException("Empty plain text");
 
-            KeyStore.Entry entry = keyStore.getEntry(alias, null);
+        KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
-            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-                throw new OwnException("Is not a private key");
-            }
-
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)entry;
-
-            return plainText;
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-            throw new OwnException("Can not encrypt", e);
-        }
+        return plainText;
     }
 
     public String decrypt(final String alias, final String cypherText) throws OwnException {
-        try {
-            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
-            if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
+        if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
 
-            KeyStore.Entry entry = keyStore.getEntry(alias, null);
+        KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
-            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-                throw new OwnException("Is not a private key");
-            }
-
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)entry;
-
-            return cypherText;
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-            throw new OwnException("Can not decrypt", e);
-        }
+        return cypherText;
     }
 
     private KeyGenParameterSpec keyGenParameterSpec(final String alias) {
@@ -173,5 +151,21 @@ public final class KeyStoreWrapper {
                 .setUserPresenceRequired(false)
                 .build();
 
+    }
+
+    private KeyStore.PrivateKeyEntry privateKeyEntry(final String alias) throws OwnException {
+        try {
+            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
+
+            KeyStore.Entry entry = keyStore.getEntry(alias, null);
+
+            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
+                throw new OwnException("Is not a private key");
+            }
+
+            return (KeyStore.PrivateKeyEntry)entry;
+        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+            throw new OwnException("Can not obtain private key", e);
+        }
     }
 }
