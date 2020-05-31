@@ -131,6 +131,21 @@ public class KeyStoreWrapperTest {
         keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
     }
 
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void signingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.sign("foo", "Hello, World!");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void verifyingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
+        final String text = "Hello, World!";
+
+        final String invalidSignature =
+                Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+
+        keyStoreWrapper.verify("foo", text, invalidSignature);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void creatingInvalidAlias() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("");
@@ -152,6 +167,21 @@ public class KeyStoreWrapperTest {
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void signingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.sign("", "Hello, World!");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void verifyingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
+        final String text = "Hello, World!";
+
+        final String invalidSignature =
+                Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+
+        keyStoreWrapper.verify("", text, invalidSignature);
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingEmptyText() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
         keyStoreWrapper.encrypt("foo", "");
@@ -161,5 +191,28 @@ public class KeyStoreWrapperTest {
     public void decryptingEmptyText() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
         keyStoreWrapper.decrypt("foo", "");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void signingEmptyText() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.create("foo");
+        keyStoreWrapper.sign("foo", "");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void verifyingEmptyText() throws KeyStoreWrapper.OwnException {
+        final String text = "";
+
+        final String invalidSignature =
+                Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+
+        keyStoreWrapper.create("foo");
+        keyStoreWrapper.verify("foo", text, invalidSignature);
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void verifyingEmptySignature() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.create("foo");
+        keyStoreWrapper.verify("foo", "Hello, World!", "");
     }
 }
