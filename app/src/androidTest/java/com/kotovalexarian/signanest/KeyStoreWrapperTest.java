@@ -60,7 +60,7 @@ public class KeyStoreWrapperTest {
         assertEquals("car", keyStoreWrapper.getAlias(1));
         assertEquals("foo", keyStoreWrapper.getAlias(2));
 
-        keyStoreWrapper.delete("car");
+        keyStoreWrapper.getByAlias("car").delete();
         assertEquals(2, keyStoreWrapper.getAliasCount());
 
         assertEquals("bar", keyStoreWrapper.getAlias(0));
@@ -73,9 +73,9 @@ public class KeyStoreWrapperTest {
         keyStoreWrapper.create(alias);
 
         final String plainText = "Hello, World!";
-        final String cypherText = keyStoreWrapper.encrypt(alias, plainText);
+        final String cypherText = keyStoreWrapper.getByAlias(alias).encrypt(plainText);
 
-        assertEquals(plainText, keyStoreWrapper.decrypt(alias, cypherText));
+        assertEquals(plainText, keyStoreWrapper.getByAlias(alias).decrypt(cypherText));
     }
 
     @Test
@@ -84,13 +84,13 @@ public class KeyStoreWrapperTest {
         keyStoreWrapper.create(alias);
 
         final String text = "Hello, World!";
-        final String signature = keyStoreWrapper.sign(alias, text);
+        final String signature = keyStoreWrapper.getByAlias(alias).sign(text);
 
         final String invalidSignature =
                 Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
 
-        assertTrue(keyStoreWrapper.verify(alias, text, signature));
-        assertFalse(keyStoreWrapper.verify(alias, text, invalidSignature));
+        assertTrue(keyStoreWrapper.getByAlias(alias).verify(text, signature));
+        assertFalse(keyStoreWrapper.getByAlias(alias).verify(text, invalidSignature));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -114,22 +114,22 @@ public class KeyStoreWrapperTest {
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void deletingAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.delete("foo");
+        keyStoreWrapper.getByAlias("foo").delete();
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingWithAliasThanDoesNotExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.encrypt("foo", "Hello, World!");
+        keyStoreWrapper.getByAlias("foo").encrypt("Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
+        keyStoreWrapper.getByAlias("foo").decrypt("jfhslkjhjkslhgjkhklhgkjfdsgh");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void signingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.sign("foo", "Hello, World!");
+        keyStoreWrapper.getByAlias("foo").sign("Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
@@ -139,7 +139,7 @@ public class KeyStoreWrapperTest {
         final String invalidSignature =
                 Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
 
-        keyStoreWrapper.verify("foo", text, invalidSignature);
+        keyStoreWrapper.getByAlias("foo").verify(text, invalidSignature);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -149,22 +149,22 @@ public class KeyStoreWrapperTest {
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void deletingInvalidAlias() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.delete("");
+        keyStoreWrapper.getByAlias("").delete();
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.encrypt("", "Hello, World!");
+        keyStoreWrapper.getByAlias("").encrypt("Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.decrypt("", "dhsdkljghlksjfdhgkjhslghsdfkgh");
+        keyStoreWrapper.getByAlias("").decrypt("dhsdkljghlksjfdhgkjhslghsdfkgh");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void signingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.sign("", "Hello, World!");
+        keyStoreWrapper.getByAlias("").sign("Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
@@ -174,25 +174,25 @@ public class KeyStoreWrapperTest {
         final String invalidSignature =
                 Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
 
-        keyStoreWrapper.verify("", text, invalidSignature);
+        keyStoreWrapper.getByAlias("").verify(text, invalidSignature);
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingEmptyText() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
-        keyStoreWrapper.encrypt("foo", "");
+        keyStoreWrapper.getByAlias("foo").encrypt("");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingEmptyText() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
-        keyStoreWrapper.decrypt("foo", "");
+        keyStoreWrapper.getByAlias("foo").decrypt("");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void signingEmptyText() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
-        keyStoreWrapper.sign("foo", "");
+        keyStoreWrapper.getByAlias("foo").sign("");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
@@ -203,12 +203,12 @@ public class KeyStoreWrapperTest {
                 Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
 
         keyStoreWrapper.create("foo");
-        keyStoreWrapper.verify("foo", text, invalidSignature);
+        keyStoreWrapper.getByAlias("foo").verify(text, invalidSignature);
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void verifyingEmptySignature() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
-        keyStoreWrapper.verify("foo", "Hello, World!", "");
+        keyStoreWrapper.getByAlias("foo").verify("Hello, World!", "");
     }
 }

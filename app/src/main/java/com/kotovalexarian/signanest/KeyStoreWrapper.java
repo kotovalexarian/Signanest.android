@@ -52,6 +52,12 @@ public final class KeyStoreWrapper {
         this.onRefresh = onRefresh;
     }
 
+    public KeyWrapper getByAlias(final String alias) throws OwnException {
+        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
+        keyWrapper.ensureExists();
+        return keyWrapper;
+    }
+
     public int getAliasCount() {
         return aliases.size();
     }
@@ -93,34 +99,6 @@ public final class KeyStoreWrapper {
         }
 
         refresh();
-    }
-
-    public void delete(final String alias) throws OwnException {
-        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
-        keyWrapper.delete();
-        refresh();
-    }
-
-    public String encrypt(final String alias, final String plainText) throws OwnException {
-        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
-        return keyWrapper.encrypt(plainText);
-    }
-
-    public String decrypt(final String alias, final String cipherText) throws OwnException {
-        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
-        return keyWrapper.decrypt(cipherText);
-    }
-
-    public String sign(final String alias, final String textString) throws OwnException {
-        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
-        return keyWrapper.sign(textString);
-    }
-
-    public boolean verify(final String alias, final String textString, final String signatureString)
-            throws OwnException
-    {
-        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
-        return keyWrapper.verify(textString, signatureString);
     }
 
     private KeyGenParameterSpec keyGenParameterSpec(final String alias) {
