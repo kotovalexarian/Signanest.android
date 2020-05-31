@@ -107,18 +107,8 @@ public final class KeyStoreWrapper {
     }
 
     public String encrypt(final String alias, final String plainText) throws OwnException {
-        try {
-            if (plainText.isEmpty()) throw new OwnException("Empty plain text");
-
-            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
-
-            final Cipher cipher = this.cipher();
-            cipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.getCertificate().getPublicKey());
-
-            return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8)));
-        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-            throw new OwnException("Can not encrypt", e);
-        }
+        KeyWrapper keyWrapper = new KeyWrapper(keyStore, alias);
+        return keyWrapper.encrypt(plainText);
     }
 
     public String decrypt(final String alias, final String cipherText) throws OwnException {
