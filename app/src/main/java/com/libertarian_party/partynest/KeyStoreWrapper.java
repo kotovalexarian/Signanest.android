@@ -106,7 +106,7 @@ public final class KeyStoreWrapper {
         refresh();
     }
 
-    public void delete(String alias) throws OwnException, IllegalArgumentException {
+    public void delete(String alias) throws OwnException {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
 
@@ -116,5 +116,25 @@ public final class KeyStoreWrapper {
         }
 
         refresh();
+    }
+
+    public String encrypt(String alias, String plainText) throws OwnException {
+        try {
+            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
+
+            return plainText;
+        } catch (KeyStoreException e) {
+            throw new OwnException("Can not delete alias", e);
+        }
+    }
+
+    public String decrypt(String alias, String cypherText) throws OwnException {
+        try {
+            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
+
+            return cypherText;
+        } catch (KeyStoreException e) {
+            throw new OwnException("Can not delete alias", e);
+        }
     }
 }

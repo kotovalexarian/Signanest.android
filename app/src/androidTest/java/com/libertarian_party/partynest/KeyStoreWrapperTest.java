@@ -111,4 +111,50 @@ public class KeyStoreWrapperTest {
 
         keyStoreWrapper.delete("");
     }
+
+    @Test
+    public void encryptionAndDecryption() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        final String alias = "foo";
+        keyStoreWrapper.create(alias);
+
+        final String plainText = "Hello, World!";
+        final String cypherText = keyStoreWrapper.encrypt(alias, plainText);
+
+        assertEquals(plainText, keyStoreWrapper.decrypt(alias, cypherText));
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void encryptingWithAliasThanDoesNotExist() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.encrypt("foo", "Hello, World!");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void encryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.encrypt("", "Hello, World!");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void decryptingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void decryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.decrypt("", "dhsdkljghlksjfdhgkjhslghsdfkgh");
+    }
 }
