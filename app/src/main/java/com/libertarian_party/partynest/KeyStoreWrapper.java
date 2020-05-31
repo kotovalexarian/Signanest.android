@@ -131,13 +131,11 @@ public final class KeyStoreWrapper {
         try {
             if (textString.isEmpty()) throw new OwnException("Empty text");
 
-            final byte[] textByteArray = textString.getBytes(StandardCharsets.UTF_8);
-
             final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
             final Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privateKeyEntry.getPrivateKey());
-            signature.update(textByteArray);
+            signature.update(textString.getBytes(StandardCharsets.UTF_8));
 
             return Base64.getEncoder().encodeToString(signature.sign());
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
@@ -152,13 +150,11 @@ public final class KeyStoreWrapper {
             if (textString.isEmpty()) throw new OwnException("Empty text");
             if (signatureString.isEmpty()) throw new OwnException("Empty signature");
 
-            final byte[] textByteArray = textString.getBytes(StandardCharsets.UTF_8);
-
             final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
             final Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initVerify(privateKeyEntry.getCertificate());
-            signature.update(textByteArray);
+            signature.update(textString.getBytes(StandardCharsets.UTF_8));
 
             return signature.verify(Base64.getDecoder().decode(signatureString));
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
