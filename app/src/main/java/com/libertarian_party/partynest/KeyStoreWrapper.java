@@ -5,17 +5,22 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 
 public final class KeyStoreWrapper {
@@ -120,6 +125,45 @@ public final class KeyStoreWrapper {
         KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
         return cypherText;
+    }
+
+    public String sign(final String alias, final String textString) throws OwnException {
+        try {
+            if (textString.isEmpty()) throw new OwnException("Empty text");
+
+            final byte[] textByteArray = textString.getBytes(StandardCharsets.UTF_8);
+
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
+
+            final Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initSign(privateKeyEntry.getPrivateKey());
+            signature.update(textByteArray);
+
+            return Base64.getEncoder().encodeToString(signature.sign());
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            throw new OwnException("Can not sign", e);
+        }
+    }
+
+    public boolean verify(final String alias, final String textString, final String signatureString)
+            throws OwnException
+    {
+        try {
+            if (textString.isEmpty()) throw new OwnException("Empty text");
+            if (signatureString.isEmpty()) throw new OwnException("Empty signature");
+
+            final byte[] textByteArray = textString.getBytes(StandardCharsets.UTF_8);
+
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
+
+            final Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(privateKeyEntry.getCertificate());
+            signature.update(textByteArray);
+
+            return signature.verify(Base64.getDecoder().decode(signatureString));
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            throw new OwnException("Can not verify", e);
+        }
     }
 
     private KeyGenParameterSpec keyGenParameterSpec(final String alias) {

@@ -15,6 +15,7 @@ import java.security.KeyStore;
 import java.util.Enumeration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class KeyStoreWrapperTest {
@@ -76,6 +77,17 @@ public class KeyStoreWrapperTest {
         final String cypherText = keyStoreWrapper.encrypt(alias, plainText);
 
         assertEquals(plainText, keyStoreWrapper.decrypt(alias, cypherText));
+    }
+
+    @Test
+    public void signingAndVerifying() throws KeyStoreWrapper.OwnException {
+        final String alias = "foo";
+        keyStoreWrapper.create(alias);
+
+        final String text = "Hello, World!";
+        final String signature = keyStoreWrapper.sign(alias, text);
+
+        assertTrue(keyStoreWrapper.verify(alias, text, signature));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
