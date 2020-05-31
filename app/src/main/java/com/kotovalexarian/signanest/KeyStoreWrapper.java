@@ -4,22 +4,16 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Enumeration;
 
 public final class KeyStoreWrapper {
@@ -119,20 +113,8 @@ public final class KeyStoreWrapper {
     public boolean verify(final String alias, final String textString, final String signatureString)
             throws OwnException
     {
-        try {
-            if (textString.isEmpty()) throw new OwnException("Empty text");
-            if (signatureString.isEmpty()) throw new OwnException("Empty signature");
-
-            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
-
-            final Signature signature = Signature.getInstance("SHA256withRSA");
-            signature.initVerify(privateKeyEntry.getCertificate());
-            signature.update(textString.getBytes(StandardCharsets.UTF_8));
-
-            return signature.verify(Base64.getDecoder().decode(signatureString));
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new OwnException("Can not verify", e);
-        }
+        KeyWrapper keyWrapper = new KeyWrapper(keyStore, alias);
+        return keyWrapper.verify(textString, signatureString);
     }
 
     private KeyGenParameterSpec keyGenParameterSpec(final String alias) {
@@ -164,21 +146,5 @@ public final class KeyStoreWrapper {
                 .setUserPresenceRequired(false)
                 .build();
 
-    }
-
-    private KeyStore.PrivateKeyEntry privateKeyEntry(final String alias) throws OwnException {
-        try {
-            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
-
-            KeyStore.Entry entry = keyStore.getEntry(alias, null);
-
-            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-                throw new OwnException("Is not a private key");
-            }
-
-            return (KeyStore.PrivateKeyEntry)entry;
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-            throw new OwnException("Can not obtain private key", e);
-        }
     }
 }

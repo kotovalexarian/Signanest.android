@@ -90,6 +90,29 @@ public class KeyWrapper {
         }
     }
 
+    public boolean verify(final String textString, final String signatureString)
+            throws KeyStoreWrapper.OwnException
+    {
+        ensureExists();
+
+        try {
+            if (textString.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty text");
+            if (signatureString.isEmpty()) {
+                throw new KeyStoreWrapper.OwnException("Empty signature");
+            }
+
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
+
+            final Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(privateKeyEntry.getCertificate());
+            signature.update(textString.getBytes(StandardCharsets.UTF_8));
+
+            return signature.verify(Base64.getDecoder().decode(signatureString));
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            throw new KeyStoreWrapper.OwnException("Can not verify", e);
+        }
+    }
+
     private void ensureExists() throws KeyStoreWrapper.OwnException {
         if (deleted) {
             throw new KeyStoreWrapper.OwnException("Alias was deleted");
