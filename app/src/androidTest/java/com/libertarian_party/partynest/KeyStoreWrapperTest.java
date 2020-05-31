@@ -11,10 +11,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
+import java.util.Base64;
 import java.util.Enumeration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
@@ -87,7 +90,11 @@ public class KeyStoreWrapperTest {
         final String text = "Hello, World!";
         final String signature = keyStoreWrapper.sign(alias, text);
 
+        final String invalidSignature =
+                Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+
         assertTrue(keyStoreWrapper.verify(alias, text, signature));
+        assertFalse(keyStoreWrapper.verify(alias, text, invalidSignature));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
