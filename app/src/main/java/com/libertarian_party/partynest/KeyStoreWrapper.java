@@ -13,6 +13,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,9 +123,12 @@ public final class KeyStoreWrapper {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
 
+            KeyStore.PrivateKeyEntry privateKeyEntry =
+                    (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
+
             return plainText;
-        } catch (KeyStoreException e) {
-            throw new OwnException("Can not delete alias", e);
+        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+            throw new OwnException("Can not encrypt", e);
         }
     }
 
@@ -132,9 +136,12 @@ public final class KeyStoreWrapper {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
 
+            KeyStore.PrivateKeyEntry privateKeyEntry =
+                    (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
+
             return cypherText;
-        } catch (KeyStoreException e) {
-            throw new OwnException("Can not delete alias", e);
+        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+            throw new OwnException("Can not decrypt", e);
         }
     }
 }
