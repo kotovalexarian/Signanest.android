@@ -112,6 +112,11 @@ public final class KeyStoreWrapper {
             if (plainText.isEmpty()) throw new OwnException("Empty plain text");
 
             KeyStore.Entry entry = keyStore.getEntry(alias, null);
+
+            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
+                throw new OwnException("Is not a private key");
+            }
+
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)entry;
 
             return plainText;
@@ -126,6 +131,11 @@ public final class KeyStoreWrapper {
             if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
 
             KeyStore.Entry entry = keyStore.getEntry(alias, null);
+
+            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
+                throw new OwnException("Is not a private key");
+            }
+
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)entry;
 
             return cypherText;
