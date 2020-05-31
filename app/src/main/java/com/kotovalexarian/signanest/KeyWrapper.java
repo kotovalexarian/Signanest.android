@@ -49,7 +49,7 @@ public class KeyWrapper {
             deleted = true;
             keyStore.deleteEntry(alias);
         } catch (KeyStoreException e) {
-            throw new KeyStoreWrapper.OwnException("Can not delete alias", e);
+            throw new KeyStoreWrapper.OwnException("Key store failure", e);
         }
     }
 
@@ -64,8 +64,12 @@ public class KeyWrapper {
             cipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.getCertificate().getPublicKey());
 
             return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8)));
-        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-            throw new KeyStoreWrapper.OwnException("Can not encrypt", e);
+        } catch (InvalidKeyException e) {
+            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+        } catch (BadPaddingException e) {
+            throw new KeyStoreWrapper.OwnException("Bad padding", e);
+        } catch (IllegalBlockSizeException e) {
+            throw new KeyStoreWrapper.OwnException("Illegal block size", e);
         }
     }
 
@@ -80,8 +84,12 @@ public class KeyWrapper {
             cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
 
             return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), StandardCharsets.UTF_8);
-        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-            throw new KeyStoreWrapper.OwnException("Can not decrypt", e);
+        } catch (InvalidKeyException e) {
+            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+        } catch (BadPaddingException e) {
+            throw new KeyStoreWrapper.OwnException("Bad padding", e);
+        } catch (IllegalBlockSizeException e) {
+            throw new KeyStoreWrapper.OwnException("Illegal block size", e);
         }
     }
 
@@ -98,8 +106,12 @@ public class KeyWrapper {
             signature.update(textString.getBytes(StandardCharsets.UTF_8));
 
             return Base64.getEncoder().encodeToString(signature.sign());
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new KeyStoreWrapper.OwnException("Can not sign", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+        } catch (InvalidKeyException e) {
+            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+        } catch (SignatureException e) {
+            throw new KeyStoreWrapper.OwnException("Signature failure", e);
         }
     }
 
@@ -121,8 +133,12 @@ public class KeyWrapper {
             signature.update(textString.getBytes(StandardCharsets.UTF_8));
 
             return signature.verify(Base64.getDecoder().decode(signatureString));
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new KeyStoreWrapper.OwnException("Can not verify", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+        } catch (InvalidKeyException e) {
+            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+        } catch (SignatureException e) {
+            throw new KeyStoreWrapper.OwnException("Signature failure", e);
         }
     }
 
@@ -135,8 +151,12 @@ public class KeyWrapper {
             }
 
             return (KeyStore.PrivateKeyEntry)entry;
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-            throw new KeyStoreWrapper.OwnException("Can not obtain private key", e);
+        } catch (KeyStoreException e) {
+            throw new KeyStoreWrapper.OwnException("Key store failure", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+        } catch (UnrecoverableEntryException e) {
+            throw new KeyStoreWrapper.OwnException("Unrecoverable entry", e);
         }
     }
 
