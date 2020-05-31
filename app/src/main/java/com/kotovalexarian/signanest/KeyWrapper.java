@@ -5,6 +5,8 @@ import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
 import java.util.Base64;
 
@@ -67,6 +69,24 @@ public class KeyWrapper {
             return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
             throw new KeyStoreWrapper.OwnException("Can not decrypt", e);
+        }
+    }
+
+    public String sign(final String textString) throws KeyStoreWrapper.OwnException {
+        ensureExists();
+
+        try {
+            if (textString.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty text");
+
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
+
+            final Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initSign(privateKeyEntry.getPrivateKey());
+            signature.update(textString.getBytes(StandardCharsets.UTF_8));
+
+            return Base64.getEncoder().encodeToString(signature.sign());
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            throw new KeyStoreWrapper.OwnException("Can not sign", e);
         }
     }
 

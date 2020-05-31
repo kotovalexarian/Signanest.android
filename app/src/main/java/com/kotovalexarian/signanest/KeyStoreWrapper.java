@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-
 public final class KeyStoreWrapper {
     public static final class OwnException extends GeneralSecurityException {
         public OwnException(String errorMessage) {
@@ -115,19 +112,8 @@ public final class KeyStoreWrapper {
     }
 
     public String sign(final String alias, final String textString) throws OwnException {
-        try {
-            if (textString.isEmpty()) throw new OwnException("Empty text");
-
-            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
-
-            final Signature signature = Signature.getInstance("SHA256withRSA");
-            signature.initSign(privateKeyEntry.getPrivateKey());
-            signature.update(textString.getBytes(StandardCharsets.UTF_8));
-
-            return Base64.getEncoder().encodeToString(signature.sign());
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new OwnException("Can not sign", e);
-        }
+        KeyWrapper keyWrapper = new KeyWrapper(keyStore, alias);
+        return keyWrapper.sign(textString);
     }
 
     public boolean verify(final String alias, final String textString, final String signatureString)
