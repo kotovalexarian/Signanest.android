@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,9 +18,17 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class KeyStoreWrapperTest {
+    private KeyStoreWrapper keyStoreWrapper;
+
     @BeforeClass
     public static void beforeAll() throws Exception {
         deleteAllAliases();
+    }
+
+    @Before
+    public void beforeEach() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        keyStoreWrapper = new KeyStoreWrapper(context);
     }
 
     @After
@@ -39,9 +48,6 @@ public class KeyStoreWrapperTest {
 
     @Test
     public void aliases() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         assertEquals(0, keyStoreWrapper.getAliasCount());
         keyStoreWrapper.create("foo");
         assertEquals(1, keyStoreWrapper.getAliasCount());
@@ -63,16 +69,11 @@ public class KeyStoreWrapperTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void indexOutOfBoundsWhenNoAliasesExist() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.getAlias(0);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void indexOutOfBoundsWhenSomeAliasesExist() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
         keyStoreWrapper.create("foo");
         keyStoreWrapper.create("bar");
 
@@ -81,42 +82,27 @@ public class KeyStoreWrapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidName() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.create("");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void aliasAlreadyExists() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.create("foo");
         keyStoreWrapper.create("foo");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void deletingAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.delete("foo");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void deletingInvalidAlias() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.delete("");
     }
 
     @Test
     public void encryptionAndDecryption() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         final String alias = "foo";
         keyStoreWrapper.create(alias);
 
@@ -128,33 +114,21 @@ public class KeyStoreWrapperTest {
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingWithAliasThanDoesNotExist() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.encrypt("foo", "Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.encrypt("", "Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
-
         keyStoreWrapper.decrypt("", "dhsdkljghlksjfdhgkjhslghsdfkgh");
     }
 }
