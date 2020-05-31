@@ -110,13 +110,8 @@ public class KeyStoreWrapperTest {
         keyStoreWrapper.getAlias(2);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void invalidName() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.create("");
-    }
-
     @Test(expected = KeyStoreWrapper.OwnException.class)
-    public void aliasAlreadyExists() throws KeyStoreWrapper.OwnException {
+    public void creatingAliasThatAlreadyExists() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
         keyStoreWrapper.create("foo");
     }
@@ -127,13 +122,23 @@ public class KeyStoreWrapperTest {
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
-    public void deletingInvalidAlias() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.delete("");
+    public void encryptingWithAliasThanDoesNotExist() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.encrypt("foo", "Hello, World!");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
-    public void encryptingWithAliasThanDoesNotExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.encrypt("foo", "Hello, World!");
+    public void decryptingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void creatingInvalidAlias() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.create("");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void deletingInvalidAlias() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.delete("");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
@@ -142,19 +147,14 @@ public class KeyStoreWrapperTest {
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void decryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.decrypt("", "dhsdkljghlksjfdhgkjhslghsdfkgh");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
     public void encryptingEmptyText() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("foo");
         keyStoreWrapper.encrypt("foo", "");
-    }
-
-    @Test(expected = KeyStoreWrapper.OwnException.class)
-    public void decryptingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
-    }
-
-    @Test(expected = KeyStoreWrapper.OwnException.class)
-    public void decryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.decrypt("", "dhsdkljghlksjfdhgkjhslghsdfkgh");
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
