@@ -23,6 +23,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 public final class KeyStoreWrapper {
     public static final class OwnException extends GeneralSecurityException {
         public OwnException(String errorMessage) {
@@ -112,19 +117,33 @@ public final class KeyStoreWrapper {
     }
 
     public String encrypt(final String alias, final String plainText) throws OwnException {
-        if (plainText.isEmpty()) throw new OwnException("Empty plain text");
+        try {
+            if (plainText.isEmpty()) throw new OwnException("Empty plain text");
 
-        KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
-        return plainText;
+            final Cipher cipher = this.cipher();
+            cipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.getCertificate().getPublicKey());
+
+            return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8)));
+        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            throw new OwnException("Can not encrypt", e);
+        }
     }
 
-    public String decrypt(final String alias, final String cypherText) throws OwnException {
-        if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
+    public String decrypt(final String alias, final String cipherText) throws OwnException {
+        try {
+            if (cipherText.isEmpty()) throw new OwnException("Empty cypher text");
 
-        KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
 
-        return cypherText;
+            final Cipher cipher = this.cipher();
+            cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
+
+            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), StandardCharsets.UTF_8);
+        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            throw new OwnException("Can not decrypt", e);
+        }
     }
 
     public String sign(final String alias, final String textString) throws OwnException {
@@ -191,6 +210,16 @@ public final class KeyStoreWrapper {
                 .setUserPresenceRequired(false)
                 .build();
 
+    }
+
+    private Cipher cipher() throws OwnException {
+        try {
+            return Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        } catch (NoSuchAlgorithmException e) {
+            throw new OwnException("No such algorithm", e);
+        } catch (NoSuchPaddingException e) {
+            throw new OwnException("No such padding", e);
+        }
     }
 
     private KeyStore.PrivateKeyEntry privateKeyEntry(final String alias) throws OwnException {
