@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             keyStoreWrapper = new KeyStoreWrapper();
         } catch (KeyStoreWrapper.OwnException e) {
-            keyStoreWrapper = null;
+            throw new RuntimeException("Key store wrapper failure", e);
         }
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
@@ -34,13 +34,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewAdapter = new RecyclerViewAdapter(keyStoreWrapper);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        if (keyStoreWrapper != null) {
-            keyStoreWrapper.onRefresh = new Runnable() {
+        try {
+            keyStoreWrapper.onRefresh(new Runnable() {
                 @Override
                 public void run() {
                     recyclerViewAdapter.notifyDataSetChanged();
                 }
-            };
+            });
+        } catch (KeyStoreWrapper.OwnException e) {
+            throw new RuntimeException("Key store wrapper failure", e);
         }
     }
 

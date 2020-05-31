@@ -33,7 +33,7 @@ public final class KeyStoreWrapper {
 
     private final ArrayList<String> aliases = new ArrayList<>();
 
-    public Runnable onRefresh;
+    private Runnable onRefresh = null;
 
     public KeyStoreWrapper() throws OwnException {
         try {
@@ -44,6 +44,12 @@ public final class KeyStoreWrapper {
         }
 
         refresh();
+    }
+
+    public void onRefresh(final Runnable onRefresh) throws OwnException {
+        if (this.onRefresh != null) throw new OwnException("Refresh callback already set");
+
+        this.onRefresh = onRefresh;
     }
 
     public int getAliasCount() {
