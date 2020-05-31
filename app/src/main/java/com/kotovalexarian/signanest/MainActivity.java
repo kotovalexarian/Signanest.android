@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter recyclerViewAdapter;
     private KeyStoreWrapper keyStoreWrapper;
     private FloatingActionButton newKeyFab;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException("Key store wrapper failure", e);
         }
 
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         newKeyFab = findViewById(R.id.newKeyFab);
 
+        swipeRefreshLayout.setOnRefreshListener(onSwipeRefreshLayoutRefresh);
         newKeyFab.setOnClickListener(onNewKeyFabClick);
     }
 
@@ -89,6 +93,20 @@ public class MainActivity extends AppCompatActivity {
             textView = view.findViewById(R.id.textView);
         }
     }
+
+    private final SwipeRefreshLayout.OnRefreshListener onSwipeRefreshLayoutRefresh =
+            new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            try {
+                keyStoreWrapper.refresh();
+            } catch (KeyStoreWrapper.OwnException e) {
+                // Do nothing.
+            }
+
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    };
 
     private final View.OnClickListener onNewKeyFabClick = new View.OnClickListener() {
         @Override
