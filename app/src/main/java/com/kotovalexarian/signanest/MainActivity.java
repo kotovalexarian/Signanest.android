@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            keyStoreWrapper = new KeyStoreWrapper(this);
+            keyStoreWrapper = new KeyStoreWrapper();
         } catch (KeyStoreWrapper.OwnException e) {
             keyStoreWrapper = null;
         }

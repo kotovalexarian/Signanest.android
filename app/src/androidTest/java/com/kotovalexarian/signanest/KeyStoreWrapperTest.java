@@ -1,9 +1,6 @@
 package com.kotovalexarian.signanest;
 
-import android.content.Context;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,8 +28,7 @@ public class KeyStoreWrapperTest {
 
     @Before
     public void beforeEach() throws KeyStoreWrapper.OwnException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        keyStoreWrapper = new KeyStoreWrapper(context);
+        keyStoreWrapper = new KeyStoreWrapper();
     }
 
     @After

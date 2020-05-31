@@ -1,6 +1,5 @@
 package com.kotovalexarian.signanest;
 
-import android.content.Context;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
@@ -41,16 +40,13 @@ public final class KeyStoreWrapper {
 
     private final String keyStoreProvider = "AndroidKeyStore";
 
-    private final Context context;
     private final KeyStore keyStore;
 
     private final ArrayList<String> aliases = new ArrayList<>();
 
     public Runnable onRefresh;
 
-    public KeyStoreWrapper(final Context context) throws OwnException {
-        this.context = context;
-
+    public KeyStoreWrapper() throws OwnException {
         try {
             keyStore = KeyStore.getInstance(keyStoreProvider);
             keyStore.load(null);
