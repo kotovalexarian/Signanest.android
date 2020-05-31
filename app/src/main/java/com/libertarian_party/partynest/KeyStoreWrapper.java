@@ -59,7 +59,7 @@ public final class KeyStoreWrapper {
         return aliases.get(position);
     }
 
-    private void refresh() throws OwnException {
+    public void refresh() throws OwnException {
         aliases.clear();
 
         try {
