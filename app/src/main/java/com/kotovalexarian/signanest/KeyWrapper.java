@@ -29,6 +29,8 @@ public class KeyWrapper {
     )
             throws KeyStoreWrapper.OwnException
     {
+        if (alias.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty alias");
+
         this.keyStoreWrapper = keyStoreWrapper;
         this.keyStore = keyStore;
         this.alias = alias;

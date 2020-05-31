@@ -89,6 +89,7 @@ public final class KeyStoreWrapper {
     public void create(final String alias) throws OwnException, IllegalArgumentException
     {
         try {
+            if (alias.isEmpty()) throw new OwnException("Empty alias");
             if (keyStore.containsAlias(alias)) throw new OwnException("Alias already exists");
 
             KeyGenParameterSpec keyGenParameterSpec = this.keyGenParameterSpec(alias);
