@@ -80,34 +80,7 @@ public final class KeyStoreWrapper {
         try {
             if (keyStore.containsAlias(alias)) throw new OwnException("Alias already exists");
 
-            KeyGenParameterSpec keyGenParameterSpec =
-                    new KeyGenParameterSpec.Builder(
-                            alias,
-                            KeyProperties.PURPOSE_ENCRYPT |
-                                    KeyProperties.PURPOSE_DECRYPT |
-                                    KeyProperties.PURPOSE_SIGN |
-                                    KeyProperties.PURPOSE_VERIFY |
-                                    KeyProperties.PURPOSE_WRAP_KEY)
-                            .setAttestationChallenge(null)
-                            .setDigests(
-                                    KeyProperties.DIGEST_SHA224,
-                                    KeyProperties.DIGEST_SHA256,
-                                    KeyProperties.DIGEST_SHA384,
-                                    KeyProperties.DIGEST_SHA512)
-                            .setEncryptionPaddings(
-                                    KeyProperties.ENCRYPTION_PADDING_RSA_OAEP,
-                                    KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                            .setIsStrongBoxBacked(false) // Because it isn't available
-                            .setKeySize(2048)
-                            .setRandomizedEncryptionRequired(true)
-                            .setSignaturePaddings(
-                                    KeyProperties.SIGNATURE_PADDING_RSA_PKCS1,
-                                    KeyProperties.SIGNATURE_PADDING_RSA_PSS)
-                            .setUnlockedDeviceRequired(false)
-                            .setUserAuthenticationRequired(false)
-                            .setUserConfirmationRequired(false)
-                            .setUserPresenceRequired(false)
-                            .build();
+            KeyGenParameterSpec keyGenParameterSpec = this.keyGenParameterSpec(alias);
 
             KeyPairGenerator keyPairGenerator =
                     KeyPairGenerator.getInstance("RSA", keyStoreProvider);
@@ -159,5 +132,36 @@ public final class KeyStoreWrapper {
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
             throw new OwnException("Can not decrypt", e);
         }
+    }
+
+    private KeyGenParameterSpec keyGenParameterSpec(final String alias) {
+        return new KeyGenParameterSpec.Builder(
+                alias,
+                KeyProperties.PURPOSE_ENCRYPT |
+                        KeyProperties.PURPOSE_DECRYPT |
+                        KeyProperties.PURPOSE_SIGN |
+                        KeyProperties.PURPOSE_VERIFY |
+                        KeyProperties.PURPOSE_WRAP_KEY)
+                .setAttestationChallenge(null)
+                .setDigests(
+                        KeyProperties.DIGEST_SHA224,
+                        KeyProperties.DIGEST_SHA256,
+                        KeyProperties.DIGEST_SHA384,
+                        KeyProperties.DIGEST_SHA512)
+                .setEncryptionPaddings(
+                        KeyProperties.ENCRYPTION_PADDING_RSA_OAEP,
+                        KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .setIsStrongBoxBacked(false) // Because it isn't available
+                .setKeySize(2048)
+                .setRandomizedEncryptionRequired(true)
+                .setSignaturePaddings(
+                        KeyProperties.SIGNATURE_PADDING_RSA_PKCS1,
+                        KeyProperties.SIGNATURE_PADDING_RSA_PSS)
+                .setUnlockedDeviceRequired(false)
+                .setUserAuthenticationRequired(false)
+                .setUserConfirmationRequired(false)
+                .setUserPresenceRequired(false)
+                .build();
+
     }
 }
