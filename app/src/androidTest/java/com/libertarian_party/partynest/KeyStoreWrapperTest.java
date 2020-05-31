@@ -67,6 +67,17 @@ public class KeyStoreWrapperTest {
         assertEquals("foo", keyStoreWrapper.getAlias(1));
     }
 
+    @Test
+    public void encryptionAndDecryption() throws KeyStoreWrapper.OwnException {
+        final String alias = "foo";
+        keyStoreWrapper.create(alias);
+
+        final String plainText = "Hello, World!";
+        final String cypherText = keyStoreWrapper.encrypt(alias, plainText);
+
+        assertEquals(plainText, keyStoreWrapper.decrypt(alias, cypherText));
+    }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void indexOutOfBoundsWhenNoAliasesExist() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.getAlias(0);
@@ -99,17 +110,6 @@ public class KeyStoreWrapperTest {
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void deletingInvalidAlias() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.delete("");
-    }
-
-    @Test
-    public void encryptionAndDecryption() throws KeyStoreWrapper.OwnException {
-        final String alias = "foo";
-        keyStoreWrapper.create(alias);
-
-        final String plainText = "Hello, World!";
-        final String cypherText = keyStoreWrapper.encrypt(alias, plainText);
-
-        assertEquals(plainText, keyStoreWrapper.decrypt(alias, cypherText));
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
