@@ -2,6 +2,7 @@ package com.libertarian_party.partynest;
 
 import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
+import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -31,6 +32,9 @@ public final class KeyStoreWrapper {
             super(errorMessage, err);
         }
     }
+
+    private final X500Principal x500Principal =
+            new X500Principal("CN=libertarian-party.com");
 
     private final Context context;
     private final KeyStore keyStore;
@@ -89,8 +93,10 @@ public final class KeyStoreWrapper {
             KeyPairGeneratorSpec keyPairGeneratorSpec =
                     new KeyPairGeneratorSpec.Builder(context)
                             .setAlias(alias)
-                            .setSubject(new X500Principal("CN=Sample Name, O=Android Authority"))
                             .setSerialNumber(BigInteger.ONE)
+                            .setSubject(x500Principal)
+                            .setKeyType(KeyProperties.KEY_ALGORITHM_RSA)
+                            .setKeySize(2048)
                             .setStartDate(start.getTime())
                             .setEndDate(end.getTime())
                             .build();
