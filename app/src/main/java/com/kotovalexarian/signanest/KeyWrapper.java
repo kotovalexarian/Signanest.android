@@ -16,16 +16,22 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 public class KeyWrapper {
+    private final KeyStoreWrapper keyStoreWrapper;
     private final KeyStore keyStore;
     private final String alias;
 
     private boolean deleted = false;
 
-    public KeyWrapper(final KeyStore keyStore, final String alias)
+    public KeyWrapper(
+            final KeyStoreWrapper keyStoreWrapper,
+            final KeyStore keyStore,
+            final String alias
+    )
             throws KeyStoreWrapper.OwnException
     {
+        this.keyStoreWrapper = keyStoreWrapper;
         this.keyStore = keyStore;
-        this.alias    = alias;
+        this.alias = alias;
     }
 
     public void ensureExists() throws KeyStoreWrapper.OwnException {
@@ -48,6 +54,7 @@ public class KeyWrapper {
         try {
             deleted = true;
             keyStore.deleteEntry(alias);
+            keyStoreWrapper.refresh();
         } catch (KeyStoreException e) {
             throw new KeyStoreWrapper.OwnException("Key store failure", e);
         }
