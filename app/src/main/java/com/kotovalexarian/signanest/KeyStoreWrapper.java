@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 public final class KeyStoreWrapper {
@@ -112,18 +110,8 @@ public final class KeyStoreWrapper {
     }
 
     public String decrypt(final String alias, final String cipherText) throws OwnException {
-        try {
-            if (cipherText.isEmpty()) throw new OwnException("Empty cypher text");
-
-            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry(alias);
-
-            final Cipher cipher = this.cipher();
-            cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
-
-            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), StandardCharsets.UTF_8);
-        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-            throw new OwnException("Can not decrypt", e);
-        }
+        KeyWrapper keyWrapper = new KeyWrapper(keyStore, alias);
+        return keyWrapper.decrypt(cipherText);
     }
 
     public String sign(final String alias, final String textString) throws OwnException {
@@ -190,16 +178,6 @@ public final class KeyStoreWrapper {
                 .setUserPresenceRequired(false)
                 .build();
 
-    }
-
-    private Cipher cipher() throws OwnException {
-        try {
-            return Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        } catch (NoSuchAlgorithmException e) {
-            throw new OwnException("No such algorithm", e);
-        } catch (NoSuchPaddingException e) {
-            throw new OwnException("No such padding", e);
-        }
     }
 
     private KeyStore.PrivateKeyEntry privateKeyEntry(final String alias) throws OwnException {

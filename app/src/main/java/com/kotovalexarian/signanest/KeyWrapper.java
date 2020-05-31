@@ -54,6 +54,22 @@ public class KeyWrapper {
         }
     }
 
+    public String decrypt(final String cipherText) throws KeyStoreWrapper.OwnException {
+        ensureExists();
+
+        try {
+            if (cipherText.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty cipher text");
+
+            final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
+            final Cipher cipher = this.cipher();
+            cipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
+
+            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), StandardCharsets.UTF_8);
+        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            throw new KeyStoreWrapper.OwnException("Can not decrypt", e);
+        }
+    }
+
     private void ensureExists() throws KeyStoreWrapper.OwnException {
         if (deleted) {
             throw new KeyStoreWrapper.OwnException("Alias was deleted");
