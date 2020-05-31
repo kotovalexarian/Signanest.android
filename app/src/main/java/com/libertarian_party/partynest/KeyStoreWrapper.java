@@ -5,7 +5,6 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -17,10 +16,7 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Enumeration;
-
-import javax.security.auth.x500.X500Principal;
 
 public final class KeyStoreWrapper {
     public static final class OwnException extends GeneralSecurityException {
