@@ -1,7 +1,7 @@
 package com.libertarian_party.partynest;
 
 import android.content.Context;
-import android.security.KeyPairGeneratorSpec;
+import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
@@ -86,25 +86,40 @@ public final class KeyStoreWrapper {
         try {
             if (keyStore.containsAlias(alias)) throw new OwnException("Alias already exists");
 
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-
-            end.add(Calendar.YEAR, 1);
-
-            KeyPairGeneratorSpec keyPairGeneratorSpec =
-                    new KeyPairGeneratorSpec.Builder(context)
-                            .setAlias(alias)
-                            .setSerialNumber(BigInteger.ONE)
-                            .setSubject(x500Principal)
-                            .setKeyType(KeyProperties.KEY_ALGORITHM_RSA)
+            KeyGenParameterSpec keyGenParameterSpec =
+                    new KeyGenParameterSpec.Builder(
+                            alias,
+                            KeyProperties.PURPOSE_ENCRYPT |
+                                    KeyProperties.PURPOSE_DECRYPT |
+                                    KeyProperties.PURPOSE_SIGN |
+                                    KeyProperties.PURPOSE_VERIFY |
+                                    KeyProperties.PURPOSE_WRAP_KEY)
+                            .setAttestationChallenge(null)
+                            .setCertificateSerialNumber(BigInteger.ONE)
+                            .setCertificateSubject(x500Principal)
+                            .setDigests(
+                                    KeyProperties.DIGEST_SHA224,
+                                    KeyProperties.DIGEST_SHA256,
+                                    KeyProperties.DIGEST_SHA384,
+                                    KeyProperties.DIGEST_SHA512)
+                            .setEncryptionPaddings(
+                                    KeyProperties.ENCRYPTION_PADDING_RSA_OAEP,
+                                    KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                            .setIsStrongBoxBacked(false) // Because it isn't available
                             .setKeySize(2048)
-                            .setStartDate(start.getTime())
-                            .setEndDate(end.getTime())
+                            .setRandomizedEncryptionRequired(true)
+                            .setSignaturePaddings(
+                                    KeyProperties.SIGNATURE_PADDING_RSA_PKCS1,
+                                    KeyProperties.SIGNATURE_PADDING_RSA_PSS)
+                            .setUnlockedDeviceRequired(false)
+                            .setUserAuthenticationRequired(false)
+                            .setUserConfirmationRequired(false)
+                            .setUserPresenceRequired(false)
                             .build();
 
             KeyPairGenerator keyPairGenerator =
                     KeyPairGenerator.getInstance("RSA", keyStoreProvider);
-            keyPairGenerator.initialize(keyPairGeneratorSpec);
+            keyPairGenerator.initialize(keyGenParameterSpec);
 
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
         } catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
