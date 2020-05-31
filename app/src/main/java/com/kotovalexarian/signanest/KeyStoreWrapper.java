@@ -101,14 +101,8 @@ public final class KeyStoreWrapper {
     }
 
     public void delete(final String alias) throws OwnException {
-        try {
-            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
-
-            keyStore.deleteEntry(alias);
-        } catch (KeyStoreException e) {
-            throw new OwnException("Can not delete alias", e);
-        }
-
+        KeyWrapper keyWrapper = new KeyWrapper(keyStore, alias);
+        keyWrapper.delete();
         refresh();
     }
 
