@@ -122,6 +122,7 @@ public final class KeyStoreWrapper {
     public String encrypt(String alias, String plainText) throws OwnException {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
+            if (plainText.isEmpty()) throw new OwnException("Empty plain text");
 
             KeyStore.PrivateKeyEntry privateKeyEntry =
                     (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
@@ -135,6 +136,7 @@ public final class KeyStoreWrapper {
     public String decrypt(String alias, String cypherText) throws OwnException {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
+            if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
 
             KeyStore.PrivateKeyEntry privateKeyEntry =
                     (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);

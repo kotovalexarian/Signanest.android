@@ -123,6 +123,12 @@ public class KeyStoreWrapperTest {
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void encryptingEmptyText() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.create("foo");
+        keyStoreWrapper.encrypt("foo", "");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingWithAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.decrypt("foo", "jfhslkjhjkslhgjkhklhgkjfdsgh");
     }
@@ -130,5 +136,11 @@ public class KeyStoreWrapperTest {
     @Test(expected = KeyStoreWrapper.OwnException.class)
     public void decryptingWithInvalidAlias() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.decrypt("", "dhsdkljghlksjfdhgkjhslghsdfkgh");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void decryptingEmptyText() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.create("foo");
+        keyStoreWrapper.decrypt("foo", "");
     }
 }
