@@ -1,4 +1,4 @@
-package com.libertarian_party.partynest;
+package com.kotovalexarian.cryptonest;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

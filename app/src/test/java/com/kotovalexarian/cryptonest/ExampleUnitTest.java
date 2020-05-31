@@ -1,4 +1,4 @@
-package com.libertarian_party.partynest;
+package com.kotovalexarian.cryptonest;
 
 import org.junit.Test;
 
