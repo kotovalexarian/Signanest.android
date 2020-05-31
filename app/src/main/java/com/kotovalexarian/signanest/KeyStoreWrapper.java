@@ -55,9 +55,13 @@ public final class KeyStoreWrapper {
     public int getCount() { return keyWrappers.size(); }
 
     public KeyWrapper getByAlias(final String alias) throws OwnException {
-        KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
-        keyWrapper.ensureExists();
-        return keyWrapper;
+        for (KeyWrapper keyWrapper : keyWrappers) {
+            if (keyWrapper.getAlias().equals(alias)) {
+                return keyWrapper;
+            }
+        }
+
+        throw new OwnException("Alias doesn't exist");
     }
 
     public KeyWrapper getByPosition(final int position) throws IndexOutOfBoundsException {
