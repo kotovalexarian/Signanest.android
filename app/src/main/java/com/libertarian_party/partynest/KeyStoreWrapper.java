@@ -78,9 +78,7 @@ public final class KeyStoreWrapper {
     public void create(String alias) throws OwnException, IllegalArgumentException
     {
         try {
-            if (keyStore.containsAlias(alias)) {
-                throw new OwnException("Alias already exists");
-            }
+            if (keyStore.containsAlias(alias)) throw new OwnException("Alias already exists");
 
             Calendar start = Calendar.getInstance();
             Calendar end = Calendar.getInstance();
@@ -103,6 +101,18 @@ public final class KeyStoreWrapper {
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
         } catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
             throw new OwnException("Can not generate key", e);
+        }
+
+        refresh();
+    }
+
+    public void delete(String alias) throws OwnException, IllegalArgumentException {
+        try {
+            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
+
+            keyStore.deleteEntry(alias);
+        } catch (KeyStoreException e) {
+            throw new OwnException("Can not delete alias", e);
         }
 
         refresh();

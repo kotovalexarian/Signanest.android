@@ -53,6 +53,12 @@ public class KeyStoreWrapperTest {
         assertEquals("bar", keyStoreWrapper.getAlias(0));
         assertEquals("car", keyStoreWrapper.getAlias(1));
         assertEquals("foo", keyStoreWrapper.getAlias(2));
+
+        keyStoreWrapper.delete("car");
+        assertEquals(2, keyStoreWrapper.getAliasCount());
+
+        assertEquals("bar", keyStoreWrapper.getAlias(0));
+        assertEquals("foo", keyStoreWrapper.getAlias(1));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -88,5 +94,21 @@ public class KeyStoreWrapperTest {
 
         keyStoreWrapper.create("foo");
         keyStoreWrapper.create("foo");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void deletingAliasThatDoesNotExist() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.delete("foo");
+    }
+
+    @Test(expected = KeyStoreWrapper.OwnException.class)
+    public void deletingInvalidAlias() throws KeyStoreWrapper.OwnException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper(context);
+
+        keyStoreWrapper.delete("");
     }
 }
