@@ -111,8 +111,8 @@ public final class KeyStoreWrapper {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
             if (plainText.isEmpty()) throw new OwnException("Empty plain text");
 
-            KeyStore.PrivateKeyEntry privateKeyEntry =
-                    (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
+            KeyStore.Entry entry = keyStore.getEntry(alias, null);
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)entry;
 
             return plainText;
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
@@ -125,8 +125,8 @@ public final class KeyStoreWrapper {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
             if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
 
-            KeyStore.PrivateKeyEntry privateKeyEntry =
-                    (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
+            KeyStore.Entry entry = keyStore.getEntry(alias, null);
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)entry;
 
             return cypherText;
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
