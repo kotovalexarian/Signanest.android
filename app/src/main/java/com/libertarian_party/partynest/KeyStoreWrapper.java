@@ -38,7 +38,7 @@ public final class KeyStoreWrapper {
 
     public Runnable onRefresh;
 
-    public KeyStoreWrapper(Context context) throws OwnException {
+    public KeyStoreWrapper(final Context context) throws OwnException {
         this.context = context;
 
         try {
@@ -55,7 +55,7 @@ public final class KeyStoreWrapper {
         return aliases.size();
     }
 
-    public String getAlias(int position) throws IndexOutOfBoundsException {
+    public String getAlias(final int position) throws IndexOutOfBoundsException {
         return aliases.get(position);
     }
 
@@ -75,7 +75,7 @@ public final class KeyStoreWrapper {
         }
     }
 
-    public void create(String alias) throws OwnException, IllegalArgumentException
+    public void create(final String alias) throws OwnException, IllegalArgumentException
     {
         try {
             if (keyStore.containsAlias(alias)) throw new OwnException("Alias already exists");
@@ -94,7 +94,7 @@ public final class KeyStoreWrapper {
         refresh();
     }
 
-    public void delete(String alias) throws OwnException {
+    public void delete(final String alias) throws OwnException {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
 
@@ -106,7 +106,7 @@ public final class KeyStoreWrapper {
         refresh();
     }
 
-    public String encrypt(String alias, String plainText) throws OwnException {
+    public String encrypt(final String alias, final String plainText) throws OwnException {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
             if (plainText.isEmpty()) throw new OwnException("Empty plain text");
@@ -120,7 +120,7 @@ public final class KeyStoreWrapper {
         }
     }
 
-    public String decrypt(String alias, String cypherText) throws OwnException {
+    public String decrypt(final String alias, final String cypherText) throws OwnException {
         try {
             if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
             if (cypherText.isEmpty()) throw new OwnException("Empty cypher text");
