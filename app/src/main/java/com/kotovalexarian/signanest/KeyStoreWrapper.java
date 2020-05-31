@@ -31,7 +31,7 @@ public final class KeyStoreWrapper {
 
     private final KeyStore keyStore;
 
-    private final ArrayList<String> aliases = new ArrayList<>();
+    private final ArrayList<KeyWrapper> keyWrappers = new ArrayList<>();
 
     private Runnable onRefresh = null;
 
@@ -52,27 +52,27 @@ public final class KeyStoreWrapper {
         this.onRefresh = onRefresh;
     }
 
+    public int getCount() { return keyWrappers.size(); }
+
     public KeyWrapper getByAlias(final String alias) throws OwnException {
         KeyWrapper keyWrapper = new KeyWrapper(this, keyStore, alias);
         keyWrapper.ensureExists();
         return keyWrapper;
     }
 
-    public int getAliasCount() {
-        return aliases.size();
-    }
-
-    public String getAlias(final int position) throws IndexOutOfBoundsException {
-        return aliases.get(position);
+    public KeyWrapper getByPosition(final int position) throws IndexOutOfBoundsException {
+        return keyWrappers.get(position);
     }
 
     public void refresh() throws OwnException {
-        aliases.clear();
+        keyWrappers.clear();
 
         try {
             Enumeration<String> enumeration = keyStore.aliases();
-            while (enumeration.hasMoreElements())
-                aliases.add(enumeration.nextElement());
+            while (enumeration.hasMoreElements()) {
+                final String alias = enumeration.nextElement();
+                keyWrappers.add(new KeyWrapper(this, keyStore, alias));
+            }
         } catch (KeyStoreException e) {
             throw new OwnException("Can not fetch aliases", e);
         }

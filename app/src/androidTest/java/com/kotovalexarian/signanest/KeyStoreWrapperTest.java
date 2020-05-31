@@ -48,23 +48,23 @@ public class KeyStoreWrapperTest {
 
     @Test
     public void aliases() throws KeyStoreWrapper.OwnException {
-        assertEquals(0, keyStoreWrapper.getAliasCount());
+        assertEquals(0, keyStoreWrapper.getCount());
         keyStoreWrapper.create("foo");
-        assertEquals(1, keyStoreWrapper.getAliasCount());
+        assertEquals(1, keyStoreWrapper.getCount());
         keyStoreWrapper.create("bar");
-        assertEquals(2, keyStoreWrapper.getAliasCount());
+        assertEquals(2, keyStoreWrapper.getCount());
         keyStoreWrapper.create("car");
-        assertEquals(3, keyStoreWrapper.getAliasCount());
+        assertEquals(3, keyStoreWrapper.getCount());
 
-        assertEquals("bar", keyStoreWrapper.getAlias(0));
-        assertEquals("car", keyStoreWrapper.getAlias(1));
-        assertEquals("foo", keyStoreWrapper.getAlias(2));
+        assertEquals("bar", keyStoreWrapper.getByPosition(0).getAlias());
+        assertEquals("car", keyStoreWrapper.getByPosition(1).getAlias());
+        assertEquals("foo", keyStoreWrapper.getByPosition(2).getAlias());
 
         keyStoreWrapper.getByAlias("car").delete();
-        assertEquals(2, keyStoreWrapper.getAliasCount());
+        assertEquals(2, keyStoreWrapper.getCount());
 
-        assertEquals("bar", keyStoreWrapper.getAlias(0));
-        assertEquals("foo", keyStoreWrapper.getAlias(1));
+        assertEquals("bar", keyStoreWrapper.getByPosition(0).getAlias());
+        assertEquals("foo", keyStoreWrapper.getByPosition(1).getAlias());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class KeyStoreWrapperTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void indexOutOfBoundsWhenNoAliasesExist() throws KeyStoreWrapper.OwnException {
-        keyStoreWrapper.getAlias(0);
+        keyStoreWrapper.getByPosition(0);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -103,7 +103,7 @@ public class KeyStoreWrapperTest {
         keyStoreWrapper.create("foo");
         keyStoreWrapper.create("bar");
 
-        keyStoreWrapper.getAlias(2);
+        keyStoreWrapper.getByPosition(2);
     }
 
     @Test(expected = KeyStoreWrapper.OwnException.class)

@@ -34,6 +34,8 @@ public class KeyWrapper {
         this.alias = alias;
     }
 
+    public String getAlias() { return alias; }
+
     public void ensureExists() throws KeyStoreWrapper.OwnException {
         if (deleted) {
             throw new KeyStoreWrapper.OwnException("Alias was deleted");

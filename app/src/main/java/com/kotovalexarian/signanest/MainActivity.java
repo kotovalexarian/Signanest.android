@@ -64,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(RecyclerViewHolder recyclerViewHolder, int position) {
-            recyclerViewHolder.textView.setText(keyStoreWrapper.getAlias(position));
+            recyclerViewHolder.textView.setText(keyStoreWrapper.getByPosition(position).getAlias());
         }
 
         @Override
         public int getItemCount() {
-            return keyStoreWrapper.getAliasCount();
+            return keyStoreWrapper.getCount();
         }
     }
 
