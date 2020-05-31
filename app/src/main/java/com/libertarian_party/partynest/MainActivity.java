@@ -10,61 +10,45 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
-    private ArrayList<String> arrayList = new ArrayList<>();
-
-    private void refreshKeys() {
-        arrayList.clear();
-
-        arrayList.add("Hello, World!");
-        arrayList.add("Foo Bar");
-
-        try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-
-            Enumeration<String> aliasesEnumeration = keyStore.aliases();
-            while (aliasesEnumeration.hasMoreElements())
-                arrayList.add(aliasesEnumeration.nextElement());
-
-        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
-            // Do nothing.
-        }
-
-        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyDataSetChanged();
-    }
+    private KeyStoreWrapper keyStoreWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        refreshKeys();
+
+        try {
+            keyStoreWrapper = new KeyStoreWrapper(this);
+        } catch (KeyStoreWrapper.OwnException e) {
+            keyStoreWrapper = null;
+        }
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new RecyclerViewAdapter(arrayList);
+        recyclerViewAdapter = new RecyclerViewAdapter(keyStoreWrapper);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        if (keyStoreWrapper != null) {
+            keyStoreWrapper.onRefresh = new Runnable() {
+                @Override
+                public void run() {
+                    recyclerViewAdapter.notifyDataSetChanged();
+                }
+            };
+        }
     }
 
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
-        private List<String> items;
+        private KeyStoreWrapper keyStoreWrapper;
 
-        public RecyclerViewAdapter(List<String> items) {
-            this.items = items;
+        public RecyclerViewAdapter(KeyStoreWrapper keyStoreWrapper) {
+            this.keyStoreWrapper = keyStoreWrapper;
         }
 
         @Override
@@ -78,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(RecyclerViewHolder recyclerViewHolder, int position) {
-            recyclerViewHolder.textView.setText(items.get(position));
+            recyclerViewHolder.textView.setText(keyStoreWrapper.getAlias(position));
         }
 
         @Override
         public int getItemCount() {
-            return items.size();
+            return keyStoreWrapper.getAliasCount();
         }
     }
 
