@@ -33,6 +33,7 @@ public final class KeyStoreWrapper {
         }
     }
 
+    private final String keyStoreProvider = "AndroidKeyStore";
     private final X500Principal x500Principal =
             new X500Principal("CN=libertarian-party.com");
 
@@ -47,7 +48,7 @@ public final class KeyStoreWrapper {
         this.context = context;
 
         try {
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore = KeyStore.getInstance(keyStoreProvider);
             keyStore.load(null);
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
             throw new OwnException("Can not initialize key store", e);
@@ -102,7 +103,7 @@ public final class KeyStoreWrapper {
                             .build();
 
             KeyPairGenerator keyPairGenerator =
-                    KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
+                    KeyPairGenerator.getInstance("RSA", keyStoreProvider);
             keyPairGenerator.initialize(keyPairGeneratorSpec);
 
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
