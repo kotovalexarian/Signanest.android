@@ -58,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
         newKeyFab.setOnClickListener(onNewKeyFabClick);
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        try {
+            keyStoreWrapper.refresh();
+        } catch (KeyStoreWrapper.OwnException e) {
+            throw new RuntimeException("Key store wrapper failure", e);
+        }
+    }
+
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         private KeyStoreWrapper keyStoreWrapper;
 
@@ -101,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 keyStoreWrapper.refresh();
             } catch (KeyStoreWrapper.OwnException e) {
-                // Do nothing.
+                throw new RuntimeException("Key store wrapper failure", e);
             }
 
             swipeRefreshLayout.setRefreshing(false);

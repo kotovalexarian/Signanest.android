@@ -28,6 +28,7 @@ public class KeyActivity extends AppCompatActivity {
                 final KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper();
                 final String keyName = keyNameEditText.getText().toString();
                 keyStoreWrapper.create(keyName);
+                finish();
             } catch (KeyStoreWrapper.OwnException e) {
                 new AlertDialog.Builder(view.getContext())
                         .setTitle("Error!")

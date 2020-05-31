@@ -142,7 +142,7 @@ public class KeyStoreWrapperTest {
         keyStoreWrapper.getByAlias("foo").verify(text, invalidSignature);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = KeyStoreWrapper.OwnException.class)
     public void creatingInvalidAlias() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.create("");
     }
