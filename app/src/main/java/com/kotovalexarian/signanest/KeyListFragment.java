@@ -72,8 +72,25 @@ public class KeyListFragment extends Fragment {
         swipeRefreshLayout = getView().findViewById(R.id.swipeRefreshLayout);
         newKeyFab = getView().findViewById(R.id.newKeyFab);
 
-        swipeRefreshLayout.setOnRefreshListener(onSwipeRefreshLayoutRefresh);
-        newKeyFab.setOnClickListener(onNewKeyFabClick);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    keyStoreWrapper.refresh();
+                } catch (KeyStoreWrapper.OwnException e) {
+                    throw new RuntimeException("Key store wrapper failure", e);
+                }
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        newKeyFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.newKeyAction);
+            }
+        });
     }
 
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
@@ -123,25 +140,4 @@ public class KeyListFragment extends Fragment {
             textView = view.findViewById(R.id.keyNameTextView);
         }
     }
-
-    private final SwipeRefreshLayout.OnRefreshListener onSwipeRefreshLayoutRefresh =
-            new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    try {
-                        keyStoreWrapper.refresh();
-                    } catch (KeyStoreWrapper.OwnException e) {
-                        throw new RuntimeException("Key store wrapper failure", e);
-                    }
-
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            };
-
-    private final View.OnClickListener onNewKeyFabClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Navigation.findNavController(view).navigate(R.id.newKeyAction);
-        }
-    };
 }

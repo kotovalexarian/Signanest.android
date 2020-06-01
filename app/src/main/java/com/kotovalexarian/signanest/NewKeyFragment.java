@@ -38,27 +38,25 @@ public class NewKeyFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         createKeyButton = getView().findViewById(R.id.createKeyButton);
-        createKeyButton.setOnClickListener(onCreateKeyButtonClick);
-    }
-
-    private final View.OnClickListener onCreateKeyButtonClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            try {
-                final EditText keyNameEditText = getView().findViewById(R.id.keyNameEditText);
-                final KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper();
-                final String keyName = keyNameEditText.getText().toString();
-                keyStoreWrapper.create(keyName);
-                final Bundle bundle = new Bundle();
-                bundle.putString(KeyFragment.ARG_ALIAS, keyName);
-                Navigation.findNavController(view).navigate(R.id.keyCreatedAction, bundle);
-            } catch (KeyStoreWrapper.OwnException e) {
-                new AlertDialog.Builder(view.getContext())
-                        .setTitle("Error!")
-                        .setMessage("Can not create key due to error.")
-                        .create()
-                        .show();
+        createKeyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    final EditText keyNameEditText = getView().findViewById(R.id.keyNameEditText);
+                    final KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper();
+                    final String keyName = keyNameEditText.getText().toString();
+                    keyStoreWrapper.create(keyName);
+                    final Bundle bundle = new Bundle();
+                    bundle.putString(KeyFragment.ARG_ALIAS, keyName);
+                    Navigation.findNavController(view).navigate(R.id.keyCreatedAction, bundle);
+                } catch (KeyStoreWrapper.OwnException e) {
+                    new AlertDialog.Builder(view.getContext())
+                            .setTitle("Error!")
+                            .setMessage("Can not create key due to error.")
+                            .create()
+                            .show();
+                }
             }
-        }
-    };
+        });
+    }
 }
