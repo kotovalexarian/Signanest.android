@@ -5,10 +5,12 @@ import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
 import java.util.Base64;
+import java.util.Set;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -50,6 +52,14 @@ public class KeyWrapper {
         } catch (KeyStoreException e) {
             throw new KeyStoreWrapper.OwnException("Key store doesn't work", e);
         }
+    }
+
+    public String getInfo() throws KeyStoreWrapper.OwnException {
+        return this.getAlgorithm();
+    }
+
+    public String getAlgorithm() throws KeyStoreWrapper.OwnException {
+        return this.privateKeyEntry().getPrivateKey().getAlgorithm();
     }
 
     public void delete() throws KeyStoreWrapper.OwnException {

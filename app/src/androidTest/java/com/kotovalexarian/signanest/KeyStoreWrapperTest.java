@@ -93,6 +93,12 @@ public class KeyStoreWrapperTest {
         assertFalse(keyStoreWrapper.getByAlias(alias).verify(text, invalidSignature));
     }
 
+    @Test
+    public void getInfo() throws KeyStoreWrapper.OwnException {
+        keyStoreWrapper.create("foo");
+        assertEquals("RSA", keyStoreWrapper.getByAlias("foo").getAlgorithm());
+    }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void indexOutOfBoundsWhenNoAliasesExist() throws KeyStoreWrapper.OwnException {
         keyStoreWrapper.getByPosition(0);
