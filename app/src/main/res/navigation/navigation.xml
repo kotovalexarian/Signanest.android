@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/keyListFragment">
+
+    <fragment
+        android:id="@+id/keyListFragment"
+        android:name="com.kotovalexarian.signanest.KeyListFragment"
+        android:label="fragment_key_list"
+        tools:layout="@layout/fragment_key_list" >
+        <action
+            android:id="@+id/newKeyAction"
+            app:destination="@id/newKeyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newKeyFragment"
+        android:name="com.kotovalexarian.signanest.NewKeyFragment"
+        android:label="fragment_new_key"
+        tools:layout="@layout/fragment_new_key" >
+        <action
+            android:id="@+id/keyCreatedAction"
+            app:destination="@id/keyListFragment" />
+    </fragment>
+</navigation>
