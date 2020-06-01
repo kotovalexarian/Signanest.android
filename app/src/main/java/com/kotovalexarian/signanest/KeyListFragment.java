@@ -79,12 +79,12 @@ public class KeyListFragment extends Fragment {
     public static class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         private KeyStoreWrapper keyStoreWrapper;
 
-        public RecyclerViewAdapter(KeyStoreWrapper keyStoreWrapper) {
+        public RecyclerViewAdapter(final KeyStoreWrapper keyStoreWrapper) {
             this.keyStoreWrapper = keyStoreWrapper;
         }
 
         @Override
-        public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
             return new RecyclerViewHolder(
                     LayoutInflater
                             .from(parent.getContext())
@@ -93,8 +93,20 @@ public class KeyListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerViewHolder recyclerViewHolder, int position) {
-            recyclerViewHolder.textView.setText(keyStoreWrapper.getByPosition(position).getAlias());
+        public void onBindViewHolder(
+                final RecyclerViewHolder recyclerViewHolder,
+                final int position)
+        {
+            final String alias = keyStoreWrapper.getByPosition(position).getAlias();
+            recyclerViewHolder.textView.setText(alias);
+            recyclerViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Bundle bundle = new Bundle();
+                    bundle.putString(KeyFragment.ARG_ALIAS, alias);
+                    Navigation.findNavController(view).navigate(R.id.showKeyAction, bundle);
+                }
+            });
         }
 
         @Override

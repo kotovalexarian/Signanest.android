@@ -14,6 +14,9 @@
         <action
             android:id="@+id/newKeyAction"
             app:destination="@id/newKeyFragment" />
+        <action
+            android:id="@+id/showKeyAction"
+            app:destination="@id/keyFragment" />
     </fragment>
     <fragment
         android:id="@+id/newKeyFragment"
