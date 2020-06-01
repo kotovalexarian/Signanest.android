@@ -22,7 +22,8 @@
         tools:layout="@layout/fragment_new_key" >
         <action
             android:id="@+id/keyCreatedAction"
-            app:destination="@id/keyFragment" />
+            app:destination="@id/keyFragment"
+            app:popUpTo="@id/keyListFragment" />
     </fragment>
     <fragment
         android:id="@+id/keyFragment"
