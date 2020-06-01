@@ -11,8 +11,6 @@ import android.widget.EditText;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import java.util.NavigableMap;
-
 public class NewKeyFragment extends Fragment {
     private Button createKeyButton;
 
@@ -51,7 +49,9 @@ public class NewKeyFragment extends Fragment {
                 final KeyStoreWrapper keyStoreWrapper = new KeyStoreWrapper();
                 final String keyName = keyNameEditText.getText().toString();
                 keyStoreWrapper.create(keyName);
-                Navigation.findNavController(view).navigate(R.id.keyCreatedAction);
+                final Bundle bundle = new Bundle();
+                bundle.putString(KeyFragment.ARG_ALIAS, keyName);
+                Navigation.findNavController(view).navigate(R.id.keyCreatedAction, bundle);
             } catch (KeyStoreWrapper.OwnException e) {
                 new AlertDialog.Builder(view.getContext())
                         .setTitle("Error!")

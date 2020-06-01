@@ -22,6 +22,15 @@
         tools:layout="@layout/fragment_new_key" >
         <action
             android:id="@+id/keyCreatedAction"
+            app:destination="@id/keyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/keyFragment"
+        android:name="com.kotovalexarian.signanest.KeyFragment"
+        android:label="fragment_key"
+        tools:layout="@layout/fragment_key" >
+        <action
+            android:id="@+id/keyListAction"
             app:destination="@id/keyListFragment" />
     </fragment>
 </navigation>
