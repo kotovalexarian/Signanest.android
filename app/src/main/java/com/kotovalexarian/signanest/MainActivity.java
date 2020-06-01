@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             return new RecyclerViewHolder(
                     LayoutInflater
                     .from(parent.getContext())
-                    .inflate(R.layout.simple_text_view, parent, false)
+                    .inflate(R.layout.key_list_item, parent, false)
             );
         }
 
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
         public RecyclerViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.textView);
+            textView = view.findViewById(R.id.keyNameTextView);
         }
     }
 
