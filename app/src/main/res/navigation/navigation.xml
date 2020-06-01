@@ -32,6 +32,8 @@
         tools:layout="@layout/fragment_key" >
         <action
             android:id="@+id/keyListAction"
-            app:destination="@id/keyListFragment" />
+            app:destination="@id/keyListFragment"
+            app:popUpTo="@id/keyListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
