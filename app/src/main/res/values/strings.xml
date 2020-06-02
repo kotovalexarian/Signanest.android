@@ -2,5 +2,6 @@
     <string name="app_name">Signanest</string>
     <string name="new_key">New key</string>
     <string name="key_name">Key name</string>
+    <string name="key_info">Key info</string>
     <string name="create_key">Create key</string>
 </resources>
