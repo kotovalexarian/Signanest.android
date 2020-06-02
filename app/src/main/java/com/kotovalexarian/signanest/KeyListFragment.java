@@ -114,8 +114,17 @@ public class KeyListFragment extends Fragment {
                 final RecyclerViewHolder recyclerViewHolder,
                 final int position)
         {
-            final String alias = keyStoreWrapper.getByPosition(position).getAlias();
-            recyclerViewHolder.textView.setText(alias);
+            final KeyWrapper keyWrapper = keyStoreWrapper.getByPosition(position);
+            final String alias = keyWrapper.getAlias();
+
+            recyclerViewHolder.keyNameTextView.setText(alias);
+
+            try {
+                recyclerViewHolder.keyInfoTextView.setText(keyWrapper.getInfo());
+            } catch (KeyStoreWrapper.OwnException e) {
+                // Do nothing.
+            }
+
             recyclerViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -133,11 +142,13 @@ public class KeyListFragment extends Fragment {
     }
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
+        public TextView keyNameTextView;
+        public TextView keyInfoTextView;
 
         public RecyclerViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.keyNameTextView);
+            keyNameTextView = view.findViewById(R.id.keyNameTextView);
+            keyInfoTextView = view.findViewById(R.id.keyInfoTextView);
         }
     }
 }

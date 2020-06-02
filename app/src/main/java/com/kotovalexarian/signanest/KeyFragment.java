@@ -13,8 +13,11 @@ public class KeyFragment extends Fragment {
     public static final String ARG_ALIAS = "alias";
 
     private String argAlias;
+    private KeyStoreWrapper keyStoreWrapper;
+    private KeyWrapper keyWrapper;
 
     private TextView keyNameTextView;
+    private TextView keyInfoTextView;
 
     public static KeyFragment newInstance(final String alias) {
         KeyFragment fragment = new KeyFragment();
@@ -33,6 +36,13 @@ public class KeyFragment extends Fragment {
         }
 
         argAlias = getArguments().getString(ARG_ALIAS);
+
+        try {
+            keyStoreWrapper = new KeyStoreWrapper();
+            keyWrapper = keyStoreWrapper.getByAlias(argAlias);
+        } catch (KeyStoreWrapper.OwnException e) {
+            throw new RuntimeException("Key store failure", e);
+        }
     }
 
     @Override
@@ -47,6 +57,13 @@ public class KeyFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         keyNameTextView = getView().findViewById(R.id.keyNameTextView);
+        keyInfoTextView = getView().findViewById(R.id.keyInfoTextView);
         keyNameTextView.setText(argAlias);
+
+        try {
+            keyInfoTextView.setText(keyWrapper.getInfo());
+        } catch (KeyStoreWrapper.OwnException e) {
+            throw new RuntimeException("Key store failure", e);
+        }
     }
 }
