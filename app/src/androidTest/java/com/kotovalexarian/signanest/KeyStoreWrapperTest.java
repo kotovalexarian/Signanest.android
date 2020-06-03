@@ -2,6 +2,8 @@ package com.kotovalexarian.signanest;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.kotovalexarian.signanest.key_store.KeyStoreWrapper;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

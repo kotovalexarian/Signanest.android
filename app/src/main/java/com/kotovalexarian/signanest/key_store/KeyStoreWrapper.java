@@ -1,4 +1,4 @@
-package com.kotovalexarian.signanest;
+package com.kotovalexarian.signanest.key_store;
 
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;

@@ -11,6 +11,8 @@ import android.widget.EditText;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.kotovalexarian.signanest.key_store.KeyStoreWrapper;
+
 public class NewKeyFragment extends Fragment {
     private Button createKeyButton;
 
