@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kotovalexarian.signanest.key_store.KeyStoreWrapper;
 import com.kotovalexarian.signanest.key_store.KeyWrapper;
+import com.kotovalexarian.signanest.key_store.OwnException;
 
 public class KeyListFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -49,7 +50,7 @@ public class KeyListFragment extends Fragment {
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         try {
             keyStoreWrapper = new KeyStoreWrapper();
-        } catch (KeyStoreWrapper.OwnException e) {
+        } catch (OwnException e) {
             throw new RuntimeException("Key store wrapper failure", e);
         }
 
@@ -67,7 +68,7 @@ public class KeyListFragment extends Fragment {
                     recyclerViewAdapter.notifyDataSetChanged();
                 }
             });
-        } catch (KeyStoreWrapper.OwnException e) {
+        } catch (OwnException e) {
             throw new RuntimeException("Key store wrapper failure", e);
         }
 
@@ -79,7 +80,7 @@ public class KeyListFragment extends Fragment {
             public void onRefresh() {
                 try {
                     keyStoreWrapper.refresh();
-                } catch (KeyStoreWrapper.OwnException e) {
+                } catch (OwnException e) {
                     throw new RuntimeException("Key store wrapper failure", e);
                 }
 
@@ -123,7 +124,7 @@ public class KeyListFragment extends Fragment {
 
             try {
                 recyclerViewHolder.keyInfoTextView.setText(keyWrapper.getInfo());
-            } catch (KeyStoreWrapper.OwnException e) {
+            } catch (OwnException e) {
                 // Do nothing.
             }
 

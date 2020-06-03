@@ -17,16 +17,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 public final class KeyStoreWrapper {
-    public static final class OwnException extends GeneralSecurityException {
-        public OwnException(String errorMessage) {
-            super(errorMessage);
-        }
-
-        public OwnException(String errorMessage, Throwable err) {
-            super(errorMessage, err);
-        }
-    }
-
     private final String keyStoreProvider = "AndroidKeyStore";
 
     private final KeyStore keyStore;

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.kotovalexarian.signanest.key_store.KeyStoreWrapper;
+import com.kotovalexarian.signanest.key_store.OwnException;
 
 public class NewKeyFragment extends Fragment {
     private Button createKeyButton;
@@ -51,7 +52,7 @@ public class NewKeyFragment extends Fragment {
                     final Bundle bundle = new Bundle();
                     bundle.putString(KeyFragment.ARG_ALIAS, keyName);
                     Navigation.findNavController(view).navigate(R.id.keyCreatedAction, bundle);
-                } catch (KeyStoreWrapper.OwnException e) {
+                } catch (OwnException e) {
                     new AlertDialog.Builder(view.getContext())
                             .setTitle("Error!")
                             .setMessage("Can not create key due to error.")

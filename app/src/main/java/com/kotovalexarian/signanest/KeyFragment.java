@@ -11,6 +11,7 @@ import androidx.navigation.Navigation;
 
 import com.kotovalexarian.signanest.key_store.KeyStoreWrapper;
 import com.kotovalexarian.signanest.key_store.KeyWrapper;
+import com.kotovalexarian.signanest.key_store.OwnException;
 
 public class KeyFragment extends Fragment {
     public static final String ARG_ALIAS = "alias";
@@ -43,7 +44,7 @@ public class KeyFragment extends Fragment {
         try {
             keyStoreWrapper = new KeyStoreWrapper();
             keyWrapper = keyStoreWrapper.getByAlias(argAlias);
-        } catch (KeyStoreWrapper.OwnException e) {
+        } catch (OwnException e) {
             throw new RuntimeException("Key store failure", e);
         }
     }
@@ -65,7 +66,7 @@ public class KeyFragment extends Fragment {
 
         try {
             keyInfoTextView.setText(keyWrapper.getInfo());
-        } catch (KeyStoreWrapper.OwnException e) {
+        } catch (OwnException e) {
             throw new RuntimeException("Key store failure", e);
         }
     }

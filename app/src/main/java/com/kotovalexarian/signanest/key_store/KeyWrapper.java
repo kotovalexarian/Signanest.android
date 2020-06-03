@@ -27,9 +27,9 @@ public class KeyWrapper {
             final KeyStore keyStore,
             final String alias
     )
-            throws KeyStoreWrapper.OwnException
+            throws OwnException
     {
-        if (alias.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty alias");
+        if (alias.isEmpty()) throw new OwnException("Empty alias");
 
         this.keyStoreWrapper = keyStoreWrapper;
         this.keyStore = keyStore;
@@ -38,29 +38,25 @@ public class KeyWrapper {
 
     public String getAlias() { return alias; }
 
-    public void ensureExists() throws KeyStoreWrapper.OwnException {
-        if (deleted) {
-            throw new KeyStoreWrapper.OwnException("Alias was deleted");
-        }
+    public void ensureExists() throws OwnException {
+        if (deleted) throw new OwnException("Alias was deleted");
 
         try {
-            if (!keyStore.containsAlias(alias)) {
-                throw new KeyStoreWrapper.OwnException("Alias doesn't exist");
-            }
+            if (!keyStore.containsAlias(alias)) throw new OwnException("Alias doesn't exist");
         } catch (KeyStoreException e) {
-            throw new KeyStoreWrapper.OwnException("Key store doesn't work", e);
+            throw new OwnException("Key store doesn't work", e);
         }
     }
 
-    public String getInfo() throws KeyStoreWrapper.OwnException {
+    public String getInfo() throws OwnException {
         return this.getAlgorithm();
     }
 
-    public String getAlgorithm() throws KeyStoreWrapper.OwnException {
+    public String getAlgorithm() throws OwnException {
         return this.privateKeyEntry().getPrivateKey().getAlgorithm();
     }
 
-    public void delete() throws KeyStoreWrapper.OwnException {
+    public void delete() throws OwnException {
         ensureExists();
 
         try {
@@ -68,15 +64,15 @@ public class KeyWrapper {
             keyStore.deleteEntry(alias);
             keyStoreWrapper.refresh();
         } catch (KeyStoreException e) {
-            throw new KeyStoreWrapper.OwnException("Key store failure", e);
+            throw new OwnException("Key store failure", e);
         }
     }
 
-    public String encrypt(final String plainText) throws KeyStoreWrapper.OwnException {
+    public String encrypt(final String plainText) throws OwnException {
         ensureExists();
 
         try {
-            if (plainText.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty plain text");
+            if (plainText.isEmpty()) throw new OwnException("Empty plain text");
 
             final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
             final Cipher cipher = this.cipher();
@@ -84,19 +80,19 @@ public class KeyWrapper {
 
             return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8)));
         } catch (InvalidKeyException e) {
-            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+            throw new OwnException("Invalid key", e);
         } catch (BadPaddingException e) {
-            throw new KeyStoreWrapper.OwnException("Bad padding", e);
+            throw new OwnException("Bad padding", e);
         } catch (IllegalBlockSizeException e) {
-            throw new KeyStoreWrapper.OwnException("Illegal block size", e);
+            throw new OwnException("Illegal block size", e);
         }
     }
 
-    public String decrypt(final String cipherText) throws KeyStoreWrapper.OwnException {
+    public String decrypt(final String cipherText) throws OwnException {
         ensureExists();
 
         try {
-            if (cipherText.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty cipher text");
+            if (cipherText.isEmpty()) throw new OwnException("Empty cipher text");
 
             final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
             final Cipher cipher = this.cipher();
@@ -104,19 +100,19 @@ public class KeyWrapper {
 
             return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), StandardCharsets.UTF_8);
         } catch (InvalidKeyException e) {
-            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+            throw new OwnException("Invalid key", e);
         } catch (BadPaddingException e) {
-            throw new KeyStoreWrapper.OwnException("Bad padding", e);
+            throw new OwnException("Bad padding", e);
         } catch (IllegalBlockSizeException e) {
-            throw new KeyStoreWrapper.OwnException("Illegal block size", e);
+            throw new OwnException("Illegal block size", e);
         }
     }
 
-    public String sign(final String textString) throws KeyStoreWrapper.OwnException {
+    public String sign(final String textString) throws OwnException {
         ensureExists();
 
         try {
-            if (textString.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty text");
+            if (textString.isEmpty()) throw new OwnException("Empty text");
 
             final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
 
@@ -126,24 +122,22 @@ public class KeyWrapper {
 
             return Base64.getEncoder().encodeToString(signature.sign());
         } catch (NoSuchAlgorithmException e) {
-            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+            throw new OwnException("No such algorithm", e);
         } catch (InvalidKeyException e) {
-            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+            throw new OwnException("Invalid key", e);
         } catch (SignatureException e) {
-            throw new KeyStoreWrapper.OwnException("Signature failure", e);
+            throw new OwnException("Signature failure", e);
         }
     }
 
     public boolean verify(final String textString, final String signatureString)
-            throws KeyStoreWrapper.OwnException
+            throws OwnException
     {
         ensureExists();
 
         try {
-            if (textString.isEmpty()) throw new KeyStoreWrapper.OwnException("Empty text");
-            if (signatureString.isEmpty()) {
-                throw new KeyStoreWrapper.OwnException("Empty signature");
-            }
+            if (textString.isEmpty()) throw new OwnException("Empty text");
+            if (signatureString.isEmpty()) throw new OwnException("Empty signature");
 
             final KeyStore.PrivateKeyEntry privateKeyEntry = this.privateKeyEntry();
 
@@ -153,39 +147,39 @@ public class KeyWrapper {
 
             return signature.verify(Base64.getDecoder().decode(signatureString));
         } catch (NoSuchAlgorithmException e) {
-            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+            throw new OwnException("No such algorithm", e);
         } catch (InvalidKeyException e) {
-            throw new KeyStoreWrapper.OwnException("Invalid key", e);
+            throw new OwnException("Invalid key", e);
         } catch (SignatureException e) {
-            throw new KeyStoreWrapper.OwnException("Signature failure", e);
+            throw new OwnException("Signature failure", e);
         }
     }
 
-    private KeyStore.PrivateKeyEntry privateKeyEntry() throws KeyStoreWrapper.OwnException {
+    private KeyStore.PrivateKeyEntry privateKeyEntry() throws OwnException {
         try {
             KeyStore.Entry entry = keyStore.getEntry(alias, null);
 
             if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-                throw new KeyStoreWrapper.OwnException("Is not a private key");
+                throw new OwnException("Is not a private key");
             }
 
             return (KeyStore.PrivateKeyEntry)entry;
         } catch (KeyStoreException e) {
-            throw new KeyStoreWrapper.OwnException("Key store failure", e);
+            throw new OwnException("Key store failure", e);
         } catch (NoSuchAlgorithmException e) {
-            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+            throw new OwnException("No such algorithm", e);
         } catch (UnrecoverableEntryException e) {
-            throw new KeyStoreWrapper.OwnException("Unrecoverable entry", e);
+            throw new OwnException("Unrecoverable entry", e);
         }
     }
 
-    private Cipher cipher() throws KeyStoreWrapper.OwnException {
+    private Cipher cipher() throws OwnException {
         try {
             return Cipher.getInstance("RSA/ECB/PKCS1Padding");
         } catch (NoSuchAlgorithmException e) {
-            throw new KeyStoreWrapper.OwnException("No such algorithm", e);
+            throw new OwnException("No such algorithm", e);
         } catch (NoSuchPaddingException e) {
-            throw new KeyStoreWrapper.OwnException("No such padding", e);
+            throw new OwnException("No such padding", e);
         }
     }
 }
